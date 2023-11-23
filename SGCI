@@ -1,0 +1,99 @@
+import speech_recognition as sr
+import pyttsx3 as ttx
+import pywhatkit
+import datetime
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
+listener = sr.Recognizer()
+engine = ttx.init()
+voice = engine.getProperty('voices')
+engine.setProperty('voice', 'french')
+
+
+def parler(text):
+    engine.say(text)
+    engine.runAndWait()
+
+
+def ecouter():
+    command = ""
+    try:
+        with sr.Microphone() as source:
+            print('parlez maintenant')
+            voix = listener.listen(source)
+            command = listener.recognize_google(voix, language='fr-FR')
+            command = command.lower()
+    except:
+        pass
+    return command
+
+
+def process_question(question):
+    stop_words = set(stopwords.words('french'))
+    words = word_tokenize(question)
+    filtered_question = [word for word in words if word.lower() not in stop_words]
+
+    # Ajoutez ici des règles pour répondre à des types spécifiques de questions
+    if 'quel est' in filtered_question and 'votre nom' in filtered_question:
+        return "Je suis un assistant vocal. Comment puis-je vous aider?"
+    elif 'comment ça va' in filtered_question:
+        return "Je suis un programme informatique, donc je n'ai pas d'émotions, mais merci de demander!"
+
+    return "Je ne suis pas sûr de comprendre votre question."
+
+
+def lancer_assistant():
+    command = ecouter()
+    print(command)
+
+    if 'mets la chanson de' in command:
+        chanteur = command.replace('mets la chanson de', '')
+        print(chanteur)
+        pywhatkit.playonyt(chanteur)
+    elif 'heure' in command:
+        heure = datetime.datetime.now().strftime('%H:%M')
+        parler('il est ' + heure)
+    elif 'bonjour' in command:
+        parler('bonjour, Bienvenue à la Société générale Côte dIvoire! comment pouvons - nous vous aider?')
+    elif 'applications' in command:
+        parler('les applications faites par la DDT sont: sentinelle, atari, Moana et Angalia')
+    elif 'je vous remercie' in command:
+        parler('c\'est moi qui vous remercie')
+    elif 'transaction' in command:
+        parler('pour faire une transaction, prenez un chéquier et remplissez-le!')
+    elif 'vérifier le solde de mon compte' in command:
+        parler('Vous pouvez vérifier votre solde de compte en vous connectant à notre application mobile, en utilisant notre site Web ou en utilisant un distributeur automatique de billets (DAB). Vous pouvez également obtenir cette information en appelant notre service téléphonique automatisé.')
+    elif 'frais associés à mon compte' in command:
+        parler('Les détails sur les frais associés à votre compte sont disponibles dans la section "Tarifs et Frais" de notre site Web. Vous pouvez également obtenir ces informations en contactant notre service client.')
+    elif 'virement bancaire' in command:
+        parler('vous pouvez effectuer un virement bancaire en ligne via notre site Web ou notre application mobile. Alternativement, vous pouvez visiter lun de nos guichets automatiques ou demander lassistance dun conseiller en agence.')
+    elif 'procédure pour ouvrir un nouveau compte' in command:
+        parler('Vous pouvez commencer le processus douverture de compte en ligne sur notre site Web. Une autre option consiste à prendre rendez-vous avec lun de nos conseillers en agence, qui vous guidera à travers les étapes nécessaires.')
+    elif 'opération frauduleuse' in command:
+        parler('En cas dopération suspecte, contactez immédiatement notre service clientèle au 27-20-20-10-10. Nous prendrons les mesures nécessaires pour sécuriser votre compte et enquêter sur lactivité suspecte.')
+    elif 'comment obtenir un prêt bancaire' in command:
+        parler('Oui, nous proposons différents types de prêts. Les conditions dépendent du type de prêt que vous recherchez. Pour obtenir des informations détaillées, nous vous recommandons de consulter notre site Web ou de prendre rendez-vous avec lun de nos conseillers en agence.')
+    elif 'comment modifier mes informations personnelles' in command:
+        parler('Vous pouvez mettre à jour vos informations personnelles en vous connectant à votre compte en ligne ou en visitant lune de nos agences. Assurez-vous dapporter une pièce didentité valide lors de la visite en agence')
+    elif 'carte de crédit' in command:
+        parler('Les détails sur le fonctionnement de votre carte de crédit sont disponibles dans les documents que vous avez reçus lors de la souscription. Vous pouvez également trouver des informations utiles sur notre site Web, notamment sur les taux dintérêt, les remboursements, et les avantages associés à votre carte')
+    elif 'horaires douverture' in command:
+        parler('Les horaires douverture de notre agence sont disponibles sur notre site Web. Vous pouvez également les obtenir en appelant notre service clientèle.')
+    elif 'obtenir un prêt' in command:
+        parler('Oui, nous proposons différents types de prêts. Les conditions dépendent du type de prêt que vous recherchez. Pour obtenir des informations détaillées, nous vous recommandons de consulter notre site Web ou de prendre rendez-vous avec lun de nos conseillers en agence.')
+    else:
+        # Si la question n'est pas spécifiquement gérée, utilisez le traitement du langage naturel
+        response = process_question(command)
+        parler(response)
+
+
+while True:
+    lancer_assistant()
+
+if __name__ == '__main__':
+    pass
