@@ -1,0 +1,7 @@
+SpeechRecognition 
+pyttsx3 
+pywhatkit
+datetime
+NLTK
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
